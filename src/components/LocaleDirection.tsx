@@ -2,8 +2,10 @@ import createCache from "@emotion/cache";
 import { CacheProvider } from "@emotion/react";
 import rtlPlugin from "@mui/stylis-plugin-rtl";
 import { ReactNode, useEffect, useMemo, useState } from "react";
-import { Store, defaultDarkTheme, defaultLightTheme, localStorageStore } from "react-admin";
+import { Store, localStorageStore, RaThemeOptions } from "react-admin";
 import { prefixer } from "stylis";
+
+import { agrinoDarkTheme, agrinoLightTheme } from "../themes/agrino";
 
 const RTL_LOCALES = new Set(["fa", "ar", "he"]);
 
@@ -13,8 +15,8 @@ const isRtlLocale = (locale: string) => RTL_LOCALES.has(locale);
 
 type LocaleDirectionProps = {
   children: (props: {
-    lightTheme: typeof defaultLightTheme;
-    darkTheme: typeof defaultDarkTheme;
+    lightTheme: RaThemeOptions;
+    darkTheme: RaThemeOptions;
     store: Store;
   }) => ReactNode;
   defaultLocale?: string;
@@ -45,7 +47,7 @@ export const LocaleDirection = ({ children, defaultLocale = "fa" }: LocaleDirect
 
   const lightTheme = useMemo(
     () => ({
-      ...defaultLightTheme,
+      ...agrinoLightTheme,
       direction: isRtl ? ("rtl" as const) : ("ltr" as const),
     }),
     [isRtl]
@@ -53,7 +55,7 @@ export const LocaleDirection = ({ children, defaultLocale = "fa" }: LocaleDirect
 
   const darkTheme = useMemo(
     () => ({
-      ...defaultDarkTheme,
+      ...agrinoDarkTheme,
       direction: isRtl ? ("rtl" as const) : ("ltr" as const),
     }),
     [isRtl]

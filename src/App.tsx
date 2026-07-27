@@ -67,6 +67,7 @@ const App = () => (
         store={store}
         theme={lightTheme}
         darkTheme={darkTheme}
+        defaultTheme="light"
       >
         <CustomRoutes>
           <Route

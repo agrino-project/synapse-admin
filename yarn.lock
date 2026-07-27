@@ -408,6 +408,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@fontsource/vazirmatn@npm:^5":
+  version: 5.3.0
+  resolution: "@fontsource/vazirmatn@npm:5.3.0"
+  checksum: 10c0/f3b11ed5f5002b2d87a1d506a9c393848ebf50c04af9fb160658bb3725059aab30814fe9d5fadb8a01d466d27326e974fb48d7aae7ed80e272e0694ea05399c9
+  languageName: node
+  linkType: hard
+
 "@humanwhocodes/config-array@npm:^0.13.0":
   version: 0.13.0
   resolution: "@humanwhocodes/config-array@npm:0.13.0"
@@ -6152,6 +6159,7 @@ __metadata:
     "@emotion/cache": "npm:^11.14.0"
     "@emotion/react": "npm:^11.14.0"
     "@emotion/styled": "npm:^11.14.1"
+    "@fontsource/vazirmatn": "npm:^5"
     "@mui/icons-material": "npm:^7.1.0"
     "@mui/material": "npm:^7.1.0"
     "@mui/stylis-plugin-rtl": "npm:^7"

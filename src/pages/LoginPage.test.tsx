@@ -123,10 +123,7 @@ describe("LoginForm", () => {
     screen.getByRole("combobox", { name: "" });
     screen.getByRole("textbox", { name: englishMessages.ra.auth.username });
     screen.getByText(englishMessages.ra.auth.password);
-    const baseUrlInput = screen.getByRole("textbox", {
-      name: englishMessages.synapseadmin.auth.base_url,
-    });
-    expect(baseUrlInput.className.split(" ")).toContain("Mui-readOnly");
+    expect(screen.queryByRole("textbox", { name: englishMessages.synapseadmin.auth.base_url })).toBeNull();
     screen.getByRole("button", { name: englishMessages.ra.auth.sign_in });
   });
 
