@@ -5155,12 +5155,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ra-language-farsi@npm:^5.1.0":
-  version: 5.1.0
-  resolution: "ra-language-farsi@npm:5.1.0"
+"ra-language-farsi@npm:^5.2.2":
+  version: 5.2.2
+  resolution: "ra-language-farsi@npm:5.2.2"
   peerDependencies:
     ra-core: ^5.0.0
-  checksum: 10c0/44eb8986e04e84d6f7db2ba68364d50ca7cac6d4e3825ee46db52c439827a09f8e97091fc09b22ef24fdbdef681468f596c44ce67acef0d60945a050d4f0a256
+  checksum: 10c0/589ac8673522efbda8f9fe99451589118d48ae34a1a0a8620ed4600e93fc6c957706c97bc232c36774cc9295ca2d99c8ede1e6021708ab44bc54e51182c4f7f8
   languageName: node
   linkType: hard
 
@@ -6169,7 +6169,7 @@ __metadata:
     ra-core: "npm:^5.14.4"
     ra-i18n-polyglot: "npm:^5.14.4"
     ra-language-english: "npm:^5.14.4"
-    ra-language-farsi: "npm:^5.1.0"
+    ra-language-farsi: "npm:^5.2.2"
     ra-language-french: "npm:^5.14.4"
     ra-language-italian: "npm:^3.13.1"
     ra-language-russian: "npm:^5.4.5"
