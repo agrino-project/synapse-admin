@@ -35,17 +35,9 @@ const messages = {
   ru: russianMessages,
   zh: chineseMessages,
 };
-const availableLocales = [
-  { locale: "en", name: "English" },
-  { locale: "de", name: "Deutsch" },
-  { locale: "fr", name: "Français" },
-  { locale: "it", name: "Italiano" },
-  { locale: "fa", name: "Persian(فارسی)" },
-  { locale: "ru", name: "Russian(Русский)" },
-  { locale: "zh", name: "简体中文" },
-];
+const availableLocales = [{ locale: "fa", name: "فارسی" }];
 const i18nProvider = polyglotI18nProvider(
-  locale => (messages[locale] ? merge({}, messages.en, messages[locale]) : messages.en),
+  locale => (messages[locale] ? merge({}, messages.en, messages[locale]) : messages.fa),
   "fa",
   availableLocales
 );

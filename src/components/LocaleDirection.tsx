@@ -27,14 +27,18 @@ type LocaleDirectionProps = {
  * React-admin only switches translations; RTL must be applied separately for languages like Farsi.
  */
 export const LocaleDirection = ({ children, defaultLocale = "fa" }: LocaleDirectionProps) => {
-  const [locale, setLocale] = useState(() => appStore.getItem<string>("locale", defaultLocale) ?? defaultLocale);
+  const [locale, setLocale] = useState(defaultLocale);
   const isRtl = isRtlLocale(locale);
 
-  useEffect(() => appStore.subscribe("locale", next => setLocale(next ?? defaultLocale)), [defaultLocale]);
+  useEffect(() => {
+    appStore.setItem("locale", defaultLocale);
+    setLocale(defaultLocale);
+  }, [defaultLocale]);
 
   useEffect(() => {
     document.documentElement.setAttribute("dir", isRtl ? "rtl" : "ltr");
-  }, [isRtl]);
+    document.documentElement.setAttribute("lang", locale);
+  }, [isRtl, locale]);
 
   const cache = useMemo(
     () =>

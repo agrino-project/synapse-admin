@@ -9,7 +9,6 @@ import {
   CardActions,
   CircularProgress,
   MenuItem,
-  Select,
   Typography,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
@@ -20,11 +19,9 @@ import {
   required,
   useLogin,
   useNotify,
-  useLocaleState,
   useTranslate,
   PasswordInput,
   TextInput,
-  useLocales,
 } from "react-admin";
 import { useFormContext } from "react-hook-form";
 
@@ -91,22 +88,7 @@ const FormBox = styled(Box)(({ theme }) => {
       padding: theme.spacing(1.5, 2.5, 2.5),
       display: "flex",
       flexDirection: "column",
-      gap: theme.spacing(2),
-    },
-    [`& .select`]: {
-      marginBottom: 0,
-      borderRadius: 12,
-      backgroundColor: isDark ? agrinoColors.dark.formBg : agrinoColors.formBg,
-      "& .MuiOutlinedInput-notchedOutline": {
-        borderColor: isDark ? agrinoColors.dark.formBorder : agrinoColors.formBorder,
-      },
-      "&:hover .MuiOutlinedInput-notchedOutline": {
-        borderColor: agrinoColors.primaryLight,
-      },
-      "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-        borderColor: agrinoColors.primary,
-        borderWidth: 1,
-      },
+      gap: theme.spacing(2.5),
     },
     [`& .field`]: {
       margin: 0,
@@ -125,18 +107,20 @@ const FormBox = styled(Box)(({ theme }) => {
       "& .MuiFilledInput-root, & .MuiOutlinedInput-root": {
         borderRadius: 12,
         backgroundColor: isDark ? agrinoColors.dark.formBg : agrinoColors.formBg,
+        boxShadow: `inset 0 0 0 1px ${isDark ? agrinoColors.dark.formBorder : agrinoColors.formBorder}`,
         "&:before, &:after": {
           display: "none",
         },
         "&:hover": {
           backgroundColor: isDark ? agrinoColors.dark.formBg : agrinoColors.formBg,
+          boxShadow: `inset 0 0 0 1px ${isDark ? "#4b5563" : "#d1d5db"}`,
         },
         "&.Mui-focused": {
           backgroundColor: isDark ? agrinoColors.dark.formBg : agrinoColors.formBg,
-          boxShadow: `0 0 0 1px ${agrinoColors.primary}`,
+          boxShadow: `inset 0 0 0 1px ${agrinoColors.primary}`,
         },
         "&.Mui-error": {
-          boxShadow: `0 0 0 1px ${isDark ? agrinoColors.dark.error : agrinoColors.error}`,
+          boxShadow: `inset 0 0 0 1px ${isDark ? agrinoColors.dark.error : agrinoColors.error}`,
         },
       },
       "& .MuiInputLabel-root": {
@@ -172,8 +156,6 @@ const LoginPage = () => {
   const allowAnyBaseUrl = !(allowSingleBaseUrl || allowMultipleBaseUrls);
   const [loading, setLoading] = useState(false);
   const [supportPassAuth, setSupportPassAuth] = useState(true);
-  const [locale, setLocale] = useLocaleState();
-  const locales = useLocales();
   const translate = useTranslate();
   const base_url = allowSingleBaseUrl ? restrictBaseUrl : storage.getItem("base_url");
   const [ssoBaseUrl, setSSOBaseUrl] = useState("");
@@ -365,21 +347,6 @@ const LoginPage = () => {
           </Box>
           <Box className="hint">{translate("synapseadmin.auth.welcome")}</Box>
           <Box className="form">
-            <Select
-              value={locale}
-              onChange={e => setLocale(e.target.value)}
-              fullWidth
-              disabled={loading}
-              className="select"
-              variant="outlined"
-              size="small"
-            >
-              {locales.map(l => (
-                <MenuItem key={l.locale} value={l.locale}>
-                  {l.name}
-                </MenuItem>
-              ))}
-            </Select>
             <FormDataConsumer>{formDataProps => <UserData {...formDataProps} />}</FormDataConsumer>
             <CardActions className="actions" disableSpacing>
               <Button
@@ -393,7 +360,7 @@ const LoginPage = () => {
               >
                 {translate("ra.auth.sign_in")}
               </Button>
-              <Button
+              {/* <Button
                 variant="outlined"
                 color="primary"
                 onClick={handleSSO}
@@ -403,7 +370,7 @@ const LoginPage = () => {
                 sx={{ py: 1.1 }}
               >
                 {translate("synapseadmin.auth.sso_sign_in")}
-              </Button>
+              </Button> */}
             </CardActions>
           </Box>
         </Card>

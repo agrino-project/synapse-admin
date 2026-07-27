@@ -11,7 +11,6 @@ import storage from "../storage";
 
 const {
   mockedNotify,
-  mockedSetLocale,
   mockedGetServerVersion,
   mockedGetSupportedFeatures,
   mockedGetSupportedLoginFlows,
@@ -20,7 +19,6 @@ const {
   mockedSplitMxid,
 } = vi.hoisted(() => ({
   mockedNotify: vi.fn(),
-  mockedSetLocale: vi.fn(),
   mockedGetServerVersion: vi.fn(),
   mockedGetSupportedFeatures: vi.fn(),
   mockedGetSupportedLoginFlows: vi.fn(),
@@ -35,11 +33,6 @@ vi.mock("react-admin", async importOriginal => {
   return {
     ...actual,
     useNotify: () => mockedNotify,
-    useLocaleState: () => ["en", mockedSetLocale],
-    useLocales: () => [
-      { locale: "en", name: "English" },
-      { locale: "de", name: "Deutsch" },
-    ],
   };
 });
 
@@ -106,7 +99,6 @@ describe("LoginForm", () => {
     renderLoginPage();
 
     screen.getByText(englishMessages.synapseadmin.auth.welcome);
-    screen.getByRole("combobox", { name: "" });
     screen.getByRole("textbox", { name: englishMessages.ra.auth.username });
     screen.getByText(englishMessages.ra.auth.password);
     const baseUrlInput = screen.getByRole("textbox", {
@@ -120,7 +112,6 @@ describe("LoginForm", () => {
     renderLoginPage("https://matrix.example.com");
 
     screen.getByText(englishMessages.synapseadmin.auth.welcome);
-    screen.getByRole("combobox", { name: "" });
     screen.getByRole("textbox", { name: englishMessages.ra.auth.username });
     screen.getByText(englishMessages.ra.auth.password);
     expect(screen.queryByRole("textbox", { name: englishMessages.synapseadmin.auth.base_url })).toBeNull();
@@ -131,7 +122,6 @@ describe("LoginForm", () => {
     renderLoginPage(["https://matrix.example.com", "https://matrix.example.org"]);
 
     screen.getByText(englishMessages.synapseadmin.auth.welcome);
-    screen.getByRole("combobox", { name: "" });
     screen.getByRole("textbox", { name: englishMessages.ra.auth.username });
     screen.getByText(englishMessages.ra.auth.password);
     screen.getByRole("combobox", {
@@ -259,16 +249,5 @@ describe("LoginForm", () => {
     expect(screen.queryByText(/1\.99\.0/)).toBeNull();
     expect(screen.queryByText(/v1\.11/)).toBeNull();
     expect(screen.getByRole("button", { name: englishMessages.synapseadmin.auth.sso_sign_in }).hasAttribute("disabled")).toBe(true);
-  });
-
-  it("changes the locale from the language select", async () => {
-    const user = userEvent.setup();
-
-    renderLoginPage();
-
-    await user.click(screen.getByRole("combobox", { name: "" }));
-    await user.click(screen.getByRole("option", { name: "Deutsch" }));
-
-    expect(mockedSetLocale).toHaveBeenCalledWith("de");
   });
 });
