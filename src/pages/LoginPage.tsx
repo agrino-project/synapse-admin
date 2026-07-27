@@ -9,7 +9,6 @@ import {
   CardActions,
   CircularProgress,
   MenuItem,
-  Typography,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import {
@@ -27,8 +26,6 @@ import { useFormContext } from "react-hook-form";
 
 import { useAppContext } from "../AppContext";
 import {
-  getServerVersion,
-  getSupportedFeatures,
   getSupportedLoginFlows,
   getWellKnownUrl,
   isValidBaseUrl,
@@ -139,11 +136,6 @@ const FormBox = styled(Box)(({ theme }) => {
       flexDirection: "column",
       gap: theme.spacing(1.5),
     },
-    [`& .serverVersion, & .matrixVersions`]: {
-      color: isDark ? agrinoColors.dark.textSecondary : agrinoColors.textSecondary,
-      fontSize: "0.8rem",
-      marginTop: theme.spacing(0.5),
-    },
   };
 });
 
@@ -230,8 +222,6 @@ const LoginPage = () => {
 
   const UserData = ({ formData }) => {
     const form = useFormContext();
-    const [serverVersion, setServerVersion] = useState("");
-    const [matrixVersions, setMatrixVersions] = useState("");
 
     const handleUsernameChange = () => {
       if (formData.base_url || allowSingleBaseUrl) return;
@@ -251,16 +241,6 @@ const LoginPage = () => {
 
       const activeBaseUrl = allowSingleBaseUrl ? restrictBaseUrl : formData.base_url;
       if (!isValidBaseUrl(activeBaseUrl)) return;
-
-      getServerVersion(activeBaseUrl)
-        .then(version => setServerVersion(`${translate("synapseadmin.auth.server_version")} ${version}`))
-        .catch(() => setServerVersion(""));
-
-      getSupportedFeatures(activeBaseUrl)
-        .then(features =>
-          setMatrixVersions(`${translate("synapseadmin.auth.supports_specs")} ${features.versions.join(", ")}`)
-        )
-        .catch(() => setMatrixVersions(""));
 
       getSupportedLoginFlows(activeBaseUrl)
         .then(loginFlows => {
@@ -326,8 +306,6 @@ const LoginPage = () => {
             </TextInput>
           </Box>
         )}
-        {serverVersion && <Typography className="serverVersion">{serverVersion}</Typography>}
-        {matrixVersions && <Typography className="matrixVersions">{matrixVersions}</Typography>}
       </>
     );
   };
