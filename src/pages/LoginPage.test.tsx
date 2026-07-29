@@ -11,18 +11,12 @@ import storage from "../storage";
 
 const {
   mockedNotify,
-  mockedSetLocale,
-  mockedGetServerVersion,
-  mockedGetSupportedFeatures,
   mockedGetSupportedLoginFlows,
   mockedGetWellKnownUrl,
   mockedIsValidBaseUrl,
   mockedSplitMxid,
 } = vi.hoisted(() => ({
   mockedNotify: vi.fn(),
-  mockedSetLocale: vi.fn(),
-  mockedGetServerVersion: vi.fn(),
-  mockedGetSupportedFeatures: vi.fn(),
   mockedGetSupportedLoginFlows: vi.fn(),
   mockedGetWellKnownUrl: vi.fn(),
   mockedIsValidBaseUrl: vi.fn(),
@@ -35,17 +29,10 @@ vi.mock("react-admin", async importOriginal => {
   return {
     ...actual,
     useNotify: () => mockedNotify,
-    useLocaleState: () => ["en", mockedSetLocale],
-    useLocales: () => [
-      { locale: "en", name: "English" },
-      { locale: "de", name: "Deutsch" },
-    ],
   };
 });
 
 vi.mock("../synapse/synapse", () => ({
-  getServerVersion: mockedGetServerVersion,
-  getSupportedFeatures: mockedGetSupportedFeatures,
   getSupportedLoginFlows: mockedGetSupportedLoginFlows,
   getWellKnownUrl: mockedGetWellKnownUrl,
   isValidBaseUrl: mockedIsValidBaseUrl,
@@ -82,8 +69,6 @@ describe("LoginForm", () => {
     vi.mocked(authProvider.checkAuth).mockResolvedValue(undefined);
     vi.mocked(authProvider.checkError).mockResolvedValue(undefined);
     vi.mocked(authProvider.getPermissions!).mockResolvedValue(undefined);
-    mockedGetServerVersion.mockResolvedValue("1.99.0");
-    mockedGetSupportedFeatures.mockResolvedValue({ versions: ["v1.11", "v1.12"] });
     mockedGetSupportedLoginFlows.mockResolvedValue([{ type: "m.login.password" }]);
     mockedGetWellKnownUrl.mockResolvedValue("https://matrix.example.com");
     mockedIsValidBaseUrl.mockImplementation(
@@ -106,7 +91,6 @@ describe("LoginForm", () => {
     renderLoginPage();
 
     screen.getByText(englishMessages.synapseadmin.auth.welcome);
-    screen.getByRole("combobox", { name: "" });
     screen.getByRole("textbox", { name: englishMessages.ra.auth.username });
     screen.getByText(englishMessages.ra.auth.password);
     const baseUrlInput = screen.getByRole("textbox", {
@@ -120,13 +104,9 @@ describe("LoginForm", () => {
     renderLoginPage("https://matrix.example.com");
 
     screen.getByText(englishMessages.synapseadmin.auth.welcome);
-    screen.getByRole("combobox", { name: "" });
     screen.getByRole("textbox", { name: englishMessages.ra.auth.username });
     screen.getByText(englishMessages.ra.auth.password);
-    const baseUrlInput = screen.getByRole("textbox", {
-      name: englishMessages.synapseadmin.auth.base_url,
-    });
-    expect(baseUrlInput.className.split(" ")).toContain("Mui-readOnly");
+    expect(screen.queryByRole("textbox", { name: englishMessages.synapseadmin.auth.base_url })).toBeNull();
     screen.getByRole("button", { name: englishMessages.ra.auth.sign_in });
   });
 
@@ -134,7 +114,6 @@ describe("LoginForm", () => {
     renderLoginPage(["https://matrix.example.com", "https://matrix.example.org"]);
 
     screen.getByText(englishMessages.synapseadmin.auth.welcome);
-    screen.getByRole("combobox", { name: "" });
     screen.getByRole("textbox", { name: englishMessages.ra.auth.username });
     screen.getByText(englishMessages.ra.auth.password);
     screen.getByRole("combobox", {
@@ -173,7 +152,7 @@ describe("LoginForm", () => {
     expect(window.location.search).toBe("");
   });
 
-  it("loads server metadata and enables SSO when supported", async () => {
+  it("loads login flows when a homeserver url is provided", async () => {
     mockedGetSupportedLoginFlows.mockResolvedValue([{ type: "m.login.password" }, { type: "m.login.sso" }]);
 
     renderLoginPage();
@@ -183,16 +162,9 @@ describe("LoginForm", () => {
     });
     fireEvent.blur(screen.getByRole("textbox", { name: englishMessages.synapseadmin.auth.base_url }));
 
-    await waitFor(() => expect(mockedGetServerVersion).toHaveBeenCalledWith("https://matrix.example.com"));
-    await waitFor(() =>
-      expect(mockedGetSupportedFeatures).toHaveBeenCalledWith("https://matrix.example.com")
-    );
     await waitFor(() =>
       expect(mockedGetSupportedLoginFlows).toHaveBeenCalledWith("https://matrix.example.com")
     );
-    expect(screen.getByText(/1\.99\.0/)).toBeTruthy();
-    expect(screen.getByText(/v1\.11, v1\.12/)).toBeTruthy();
-    expect(screen.getByRole("button", { name: englishMessages.synapseadmin.auth.sso_sign_in }).hasAttribute("disabled")).toBe(false);
   });
 
   it("submits credentials and reports login errors via notify", async () => {
@@ -218,31 +190,7 @@ describe("LoginForm", () => {
     await waitFor(() => expect(mockedNotify).toHaveBeenCalledWith("bad credentials", { type: "warning" }));
   });
 
-  it("stores the SSO base url before redirecting", async () => {
-    const user = userEvent.setup();
-    mockedGetSupportedLoginFlows.mockResolvedValue([{ type: "m.login.sso" }]);
-
-    renderLoginPage();
-
-    fireEvent.change(screen.getByRole("textbox", { name: englishMessages.synapseadmin.auth.base_url }), {
-      target: { value: "https://matrix.example.com" },
-    });
-    fireEvent.blur(screen.getByRole("textbox", { name: englishMessages.synapseadmin.auth.base_url }));
-
-    const originalHref = window.location.href;
-    await waitFor(() =>
-      expect(screen.getByRole("button", { name: englishMessages.synapseadmin.auth.sso_sign_in }).hasAttribute("disabled")).toBe(false)
-    );
-    await user.click(screen.getByRole("button", { name: englishMessages.synapseadmin.auth.sso_sign_in }));
-
-    expect(storage.getItem("sso_base_url")).toBe("https://matrix.example.com");
-    expect(window.location.href).not.toBe(originalHref);
-    expect(window.location.href).toContain("/_matrix/client/r0/login/sso/redirect");
-  });
-
-  it("clears server details when metadata requests fail", async () => {
-    mockedGetServerVersion.mockRejectedValueOnce(new Error("version failed"));
-    mockedGetSupportedFeatures.mockRejectedValueOnce(new Error("features failed"));
+  it("keeps password login available when flow lookup fails", async () => {
     mockedGetSupportedLoginFlows.mockRejectedValueOnce(new Error("flows failed"));
 
     renderLoginPage();
@@ -252,26 +200,9 @@ describe("LoginForm", () => {
     });
     fireEvent.blur(screen.getByRole("textbox", { name: englishMessages.synapseadmin.auth.base_url }));
 
-    await waitFor(() => expect(mockedGetServerVersion).toHaveBeenCalledWith("https://matrix.example.com"));
-    await waitFor(() =>
-      expect(mockedGetSupportedFeatures).toHaveBeenCalledWith("https://matrix.example.com")
-    );
     await waitFor(() =>
       expect(mockedGetSupportedLoginFlows).toHaveBeenCalledWith("https://matrix.example.com")
     );
-    expect(screen.queryByText(/1\.99\.0/)).toBeNull();
-    expect(screen.queryByText(/v1\.11/)).toBeNull();
-    expect(screen.getByRole("button", { name: englishMessages.synapseadmin.auth.sso_sign_in }).hasAttribute("disabled")).toBe(true);
-  });
-
-  it("changes the locale from the language select", async () => {
-    const user = userEvent.setup();
-
-    renderLoginPage();
-
-    await user.click(screen.getByRole("combobox", { name: "" }));
-    await user.click(screen.getByRole("option", { name: "Deutsch" }));
-
-    expect(mockedSetLocale).toHaveBeenCalledWith("de");
+    expect(screen.getByRole("button", { name: englishMessages.ra.auth.sign_in }).hasAttribute("disabled")).toBe(false);
   });
 });

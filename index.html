@@ -1,25 +1,25 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fa" dir="rtl">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#000000" />
+    <meta name="theme-color" content="#326430" />
     <meta
       name="description"
-      content="Synapse-Admin"
+      content="مدیریت کاربران"
     />
     <!--
       manifest.json provides metadata used when your web app is installed on a
       user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
     -->
     <link rel="manifest" href="./manifest.json" />
-    <link rel="shortcut icon" href="./favicon.ico" />
-    <title>Synapse-Admin</title>
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+    <title>مدیریت کاربران</title>
     <style>
       body {
         margin: 0;
         padding: 0;
-        font-family: sans-serif;
+        font-family: "Vazirmatn", sans-serif;
       }
 
       .loader-container {
@@ -32,7 +32,7 @@
         bottom: 0;
         left: 0;
         right: 0;
-        background-color: #fafafa;
+        background-color: #f3fcf2;
       }
 
       /* CSS Spinner from https://projects.lukehaas.me/css-loaders/ */
@@ -44,7 +44,7 @@
       }
 
       .loader {
-        color: #283593;
+        color: #326430;
         font-size: 11px;
         text-indent: -99999em;
         margin: 55px auto;
@@ -66,7 +66,7 @@
       .loader:before {
         width: 5.2em;
         height: 10.2em;
-        background: #fafafa;
+        background: #f3fcf2;
         border-radius: 10.2em 0 0 10.2em;
         top: -0.1em;
         left: -0.1em;
@@ -79,7 +79,7 @@
       .loader:after {
         width: 5.2em;
         height: 10.2em;
-        background: #fafafa;
+        background: #f3fcf2;
         border-radius: 0 10.2em 10.2em 0;
         top: -0.1em;
         left: 5.1em;
@@ -120,13 +120,5 @@
       </div>
     </div>
     <script type="module" src="/src/index.tsx"></script>
-    <footer
-      style="position: relative; z-index: 2; height: 2em; margin-top: -2em; line-height: 2em; background-color: #eee; border: 0.5px solid #ddd">
-      <a id="copyright" href="https://github.com/Awesome-Technologies/synapse-admin"
-        style="margin-left: 1em; color: #888; font-family: Roboto, Helvetica, Arial, sans-serif; font-weight: 100; font-size: 0.8em; text-decoration: none;">
-        Synapse-Admin <b><span id="version"></span></b> by Awesome Technologies Innovationslabor GmbH
-      </a>
-    </footer>
   </body>
-  <script>document.getElementById("version").textContent = __SYNAPSE_ADMIN_VERSION__</script>
 </html>
